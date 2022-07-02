@@ -1,24 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import { WebGLCanvas } from "./components/WebGLCanvas";
+import { Square } from "./components/Square";
 
 function App() {
+  const [depth, setDepth] = useState(-6);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <WebGLCanvas width={500} height={500}>
+        <Square x={0} y={0} z={depth} timeOffset={0} />
+        <Square x={0} y={0} z={depth} timeOffset={100} />
+        <Square x={0} y={0} z={depth} timeOffset={200} />
+        <Square x={0} y={0} z={depth} timeOffset={300} />
+      </WebGLCanvas>
+      <br />
+      Depth: {depth}
+      <br />
+      <button onClick={() => setDepth(x => x - 1)}>-</button>
+      <button onClick={() => setDepth(x => x + 1)}>+</button>
     </div>
   );
 }
