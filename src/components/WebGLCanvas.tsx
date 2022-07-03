@@ -10,7 +10,6 @@ import React, {
 export interface IWebGLContextValue {
   width: number;
   height: number;
-  time: number;
 
   gl: WebGL2RenderingContext;
 
@@ -35,7 +34,6 @@ export const WebGLCanvas: React.FC<Props> = ({ width, height, children }) => {
     undefined
   );
   const frameTimer = useRef<null | number>(null);
-  const [time, setTime] = useState(() => performance.now());
 
   const frameCallbacks = useRef<FrameRequestCallback[]>([]);
 
@@ -94,19 +92,15 @@ export const WebGLCanvas: React.FC<Props> = ({ width, height, children }) => {
       width,
       height,
 
-      time,
-
       gl,
 
       registerFrameCallback,
       unregisterFrameCallback
     };
-  }, [width, height, time, gl, registerFrameCallback, unregisterFrameCallback]);
+  }, [width, height, gl, registerFrameCallback, unregisterFrameCallback]);
 
   const onFrame: FrameRequestCallback = useCallback(
     time => {
-      setTime(time);
-
       clearCanvas();
       frameCallbacks.current.forEach(cb => cb(time));
 
