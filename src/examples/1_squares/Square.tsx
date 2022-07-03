@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
-import { WebGLContext } from "./WebGLCanvas";
-import { loadGLShader } from "../utilities/loadGLShader";
-import { compileGLProgram } from "../utilities/compileGLProgram";
+import { WebGLContext } from "../../components/WebGLCanvas";
+import { loadGLShader } from "../../utilities/loadGLShader";
+import { compileGLProgram } from "../../utilities/compileGLProgram";
 import { mat4 } from "gl-matrix";
-import { useOnFrame } from "../hooks/useOnFrame";
-import { useMemoWithCleanUp } from "../hooks/useMemoWithCleanUp";
-import { Camera3DContext } from "./Camera3D";
+import { useOnFrame } from "../../hooks/useOnFrame";
+import { useMemoWithCleanUp } from "../../hooks/useMemoWithCleanUp";
+import { Camera3DContext } from "../../components/Camera3D";
 
 const vsSource = `
   attribute vec4 aVertexPosition;

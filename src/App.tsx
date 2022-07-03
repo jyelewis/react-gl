@@ -1,28 +1,26 @@
 import React, { useState } from "react";
 import "./App.css";
-import { WebGLCanvas } from "./components/WebGLCanvas";
-import { Square } from "./components/Square";
-import { Camera3D } from "./components/Camera3D";
-import { CameraControls } from "./components/CameraControls";
+import { SquaresExample } from "./examples/1_squares/SquaresExample";
+
+const examples: Record<string, React.FC> = {
+  Squares: SquaresExample
+};
 
 function App() {
-  const [depth, setDepth] = useState(-6);
+  const [activeExample, setActiveExample] = useState<string>("Squares");
+
+  const ActiveExampleComponent = examples[activeExample];
+
   return (
-    <div className="App">
-      <WebGLCanvas width={500} height={500}>
-        <Camera3D>
-          <Square x={0} y={0} z={depth} timeOffset={0} />
-          <Square x={0} y={0} z={depth} timeOffset={100} />
-          <Square x={0} y={0} z={depth} timeOffset={200} />
-          <Square x={0} y={0} z={depth} timeOffset={300} />
-          <CameraControls />
-        </Camera3D>
-      </WebGLCanvas>
-      <br />
-      Depth: {depth}
-      <br />
-      <button onClick={() => setDepth(x => x - 1)}>-</button>
-      <button onClick={() => setDepth(x => x + 1)}>+</button>
+    <div className="app">
+      <h1>{activeExample}</h1>
+      {Object.keys(examples).map(example => (
+        <button onClick={() => setActiveExample(example)}>{example}</button>
+      ))}
+
+      <div className="example">
+        <ActiveExampleComponent />
+      </div>
     </div>
   );
 }

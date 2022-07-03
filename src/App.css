@@ -1,8 +1,11 @@
-.App {
+.app {
   text-align: center;
 
   width: 500px;
   height: 500px;
   margin: 15px auto;
-  background-color: white;
+}
+
+.example {
+  margin: 15px auto;
 }
