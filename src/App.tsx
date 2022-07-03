@@ -2,16 +2,21 @@ import React, { useState } from "react";
 import "./App.css";
 import { WebGLCanvas } from "./components/WebGLCanvas";
 import { Square } from "./components/Square";
+import { Camera3D } from "./components/Camera3D";
+import { CameraControls } from "./components/CameraControls";
 
 function App() {
   const [depth, setDepth] = useState(-6);
   return (
     <div className="App">
       <WebGLCanvas width={500} height={500}>
-        <Square x={0} y={0} z={depth} timeOffset={0} />
-        <Square x={0} y={0} z={depth} timeOffset={100} />
-        <Square x={0} y={0} z={depth} timeOffset={200} />
-        <Square x={0} y={0} z={depth} timeOffset={300} />
+        <Camera3D>
+          <Square x={0} y={0} z={depth} timeOffset={0} />
+          <Square x={0} y={0} z={depth} timeOffset={100} />
+          <Square x={0} y={0} z={depth} timeOffset={200} />
+          <Square x={0} y={0} z={depth} timeOffset={300} />
+          <CameraControls />
+        </Camera3D>
       </WebGLCanvas>
       <br />
       Depth: {depth}

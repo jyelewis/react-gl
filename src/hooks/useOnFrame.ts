@@ -11,7 +11,7 @@ export function useOnFrame(frameCb: FrameRequestCallback) {
   latestFrameCb.current = frameCb;
 
   const localFrameCb: FrameRequestCallback = useCallback(
-    x => latestFrameCb.current(x),
+    time => latestFrameCb.current(time),
     []
   );
 

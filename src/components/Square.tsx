@@ -1,10 +1,11 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext } from "react";
 import { WebGLContext } from "./WebGLCanvas";
 import { loadGLShader } from "../utilities/loadGLShader";
 import { compileGLProgram } from "../utilities/compileGLProgram";
 import { mat4 } from "gl-matrix";
 import { useOnFrame } from "../hooks/useOnFrame";
 import { useMemoWithCleanUp } from "../hooks/useMemoWithCleanUp";
+import { Camera3DContext } from "./Camera3D";
 
 const vsSource = `
   attribute vec4 aVertexPosition;
@@ -31,7 +32,8 @@ type Props = {
 };
 
 export const Square: React.FC<Props> = ({ x, y, z, timeOffset }) => {
-  const { gl, width, height, time } = useContext(WebGLContext);
+  const { gl } = useContext(WebGLContext);
+  const { projectionMatrix } = useContext(Camera3DContext);
 
   const program = useMemoWithCleanUp(() => {
     const vertexShader = loadGLShader(gl, gl.VERTEX_SHADER, vsSource);
@@ -106,7 +108,7 @@ export const Square: React.FC<Props> = ({ x, y, z, timeOffset }) => {
     ];
   }, [gl, program]);
 
-  useMemo(() => {
+  useOnFrame(time => {
     // our mv matrix specifies where we want this square to be drawn
     const modelViewMatrix = mat4.create();
 
@@ -128,41 +130,14 @@ export const Square: React.FC<Props> = ({ x, y, z, timeOffset }) => {
       modelViewMatrix
     );
 
-    return modelViewMatrix;
-  }, [gl, program, x, y, z, time, timeOffset]);
-
-  useMemo(() => {
-    // create a perspective matrix, a special matrix that is
-    // used to simulate the distortion of perspective in a camera.
-    // our field of view is 45 degrees, with a width/height
-    // ratio that matches the display size of the canvas
-    // and we only want to see objects between 0.1 units
-    // and 100 units away from the camera.
-
-    const fieldOfView = (45 * Math.PI) / 180; // in radians
-    const aspect = width / height;
-    const zNear = 0.1;
-    const zFar = 100.0;
-
-    // note: glmatrix.js always has the first argument
-    // as the destination to receive the result.
-    const projectionMatrix = mat4.create();
-    mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
-
-    // bind projection matrix if it or the program changes
+    // bind camera projection matrix
     gl.useProgram(program.glProgram);
-
-    // Set the shader uniforms for our camera
     gl.uniformMatrix4fv(
       program.uniformLocations.projectionMatrix,
       false,
       projectionMatrix
     );
 
-    return projectionMatrix;
-  }, [gl, program, width, height]);
-
-  useOnFrame(() => {
     // bind vertexes & program
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
     gl.useProgram(program.glProgram);
