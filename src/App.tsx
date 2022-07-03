@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import "./App.css";
 import { SquaresExample } from "./examples/1_squares/SquaresExample";
+import { CubeExample } from "./examples/2_cube/CubeExample";
 
 const examples: Record<string, React.FC> = {
-  Squares: SquaresExample
+  Squares: SquaresExample,
+  Cube: CubeExample
 };
 
 function App() {
-  const [activeExample, setActiveExample] = useState<string>("Squares");
+  const [activeExample, setActiveExample] = useState<string>("Cube");
 
   const ActiveExampleComponent = examples[activeExample];
 
@@ -15,7 +17,9 @@ function App() {
     <div className="app">
       <h1>{activeExample}</h1>
       {Object.keys(examples).map(example => (
-        <button onClick={() => setActiveExample(example)}>{example}</button>
+        <button key={example} onClick={() => setActiveExample(example)}>
+          {example}
+        </button>
       ))}
 
       <div className="example">

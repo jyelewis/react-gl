@@ -26,7 +26,9 @@ export const CameraControls: React.FC = () => {
 
   return (
     <div>
-      <pre>{JSON.stringify(cameraPosition, null, 2)}</pre>
+      <pre style={{ textAlign: "left" }}>
+        {JSON.stringify(cameraPosition, null, 2)}
+      </pre>
       <button onClick={up}>Up</button>
       <button onClick={down}>Down</button>
       <button onClick={left}>Left</button>
