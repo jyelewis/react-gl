@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/react-gl/static/css/main.6b70022c.css",
+    "main.js": "/react-gl/static/js/main.8e5c2932.js",
+    "index.html": "/react-gl/index.html",
+    "main.6b70022c.css.map": "/react-gl/static/css/main.6b70022c.css.map",
+    "main.8e5c2932.js.map": "/react-gl/static/js/main.8e5c2932.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6b70022c.css",
+    "static/js/main.8e5c2932.js"
+  ]
+}
