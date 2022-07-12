@@ -57,9 +57,9 @@ export const Square: React.FC<Props> = ({ x, y, z, timeOffset }) => {
       program,
       () => {
         // clean up old gpu objects when program changes
+        gl.deleteProgram(program.glProgram);
         gl.deleteShader(program.vertexShader);
         gl.deleteShader(program.fragShader);
-        gl.deleteProgram(program.glProgram);
       }
     ];
   }, [gl]);

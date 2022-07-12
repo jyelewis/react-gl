@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import "./App.css";
 import { SquaresExample } from "./examples/1_squares/SquaresExample";
 import { CubeExample } from "./examples/2_cube/CubeExample";
+import { TerrainMeshExample } from "./examples/4_terrain_mesh/TerrainMeshExample";
 
 const examples: Record<string, React.FC> = {
   Squares: SquaresExample,
-  Cube: CubeExample
+  Cube: CubeExample,
+  TerrainMesh: TerrainMeshExample
 };
 
 function App() {
-  const [activeExample, setActiveExample] = useState<string>("Cube");
+  const [activeExample, setActiveExample] = useState<string>("TerrainMesh");
 
   const ActiveExampleComponent = examples[activeExample];
 

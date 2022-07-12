@@ -21,7 +21,6 @@ const vsSource = `
   void main(void) {
     gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
     vColor = aVertexColor;
-    // vColor = aVertexPosition;
   }
 `;
 
@@ -60,9 +59,9 @@ export const Cube: React.FC = () => {
       program,
       () => {
         // clean up old gpu objects when program changes
+        gl.deleteProgram(program.glProgram);
         gl.deleteShader(program.vertexShader);
         gl.deleteShader(program.fragShader);
-        gl.deleteProgram(program.glProgram);
       }
     ];
   }, [gl]);
@@ -80,7 +79,6 @@ export const Cube: React.FC = () => {
     const stride = 0; // how many bytes to get from one set of values to the next
     // 0 = use type and numComponents above
     const offset = 0; // how many bytes inside the buffer to start from
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
     gl.vertexAttribPointer(
       program.attribLocations.vertexPosition,
       numComponents,
