@@ -203,8 +203,10 @@ export const Cube: React.FC = () => {
     mat4.rotateX(modelViewMatrix, modelViewMatrix, offsetRotateX);
     mat4.rotateY(modelViewMatrix, modelViewMatrix, offsetRotateY);
 
-    // bind mv matrix to our program if it or the program changes
+    // select our shader program
     gl.useProgram(program.glProgram);
+
+    // bind mv matrix to our program if it or the program changes
     gl.uniformMatrix4fv(
       program.uniformLocations.modelViewMatrix,
       false,
@@ -212,7 +214,6 @@ export const Cube: React.FC = () => {
     );
 
     // bind camera projection matrix
-    gl.useProgram(program.glProgram);
     gl.uniformMatrix4fv(
       program.uniformLocations.projectionMatrix,
       false,
@@ -223,8 +224,6 @@ export const Cube: React.FC = () => {
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-
-    gl.useProgram(program.glProgram);
 
     const vertexCount = 36;
     const type = gl.UNSIGNED_SHORT;

@@ -94,12 +94,11 @@ export const Triangle: React.FC = () => {
   }, [gl, program]);
 
   useOnFrame(() => {
-    // bind camera projection matrix
+    // select our shader program
     gl.useProgram(program.glProgram);
 
     // bind vertexes & program
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
-    gl.useProgram(program.glProgram);
 
     // draw our 4 vertices
     gl.drawArrays(gl.TRIANGLES, 0, 3);

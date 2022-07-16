@@ -122,8 +122,10 @@ export const Square: React.FC<Props> = ({ x, y, z, timeOffset }) => {
       [x + offsetX, y + offsetY, z]
     );
 
-    // bind mv matrix to our program if it or the program changes
+    // select our shader program
     gl.useProgram(program.glProgram);
+
+    // bind mv matrix to our program if it or the program changes
     gl.uniformMatrix4fv(
       program.uniformLocations.modelViewMatrix,
       false,
@@ -131,7 +133,6 @@ export const Square: React.FC<Props> = ({ x, y, z, timeOffset }) => {
     );
 
     // bind camera projection matrix
-    gl.useProgram(program.glProgram);
     gl.uniformMatrix4fv(
       program.uniformLocations.projectionMatrix,
       false,
@@ -140,7 +141,6 @@ export const Square: React.FC<Props> = ({ x, y, z, timeOffset }) => {
 
     // bind vertexes & program
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
-    gl.useProgram(program.glProgram);
 
     // draw our 4 vertices
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
