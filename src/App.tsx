@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { SquaresExample } from "./examples/1_squares/SquaresExample";
 import { CubeExample } from "./examples/2_cube/CubeExample";
@@ -13,7 +13,23 @@ const examples: Record<string, React.FC> = {
 };
 
 function App() {
-  const [activeExample, setActiveExample] = useState<string>("TerrainMesh");
+  const [activeExample, setActiveExample] = useState<string>("Triangle");
+
+  const selectExample = useCallback(
+    (newExample: string) => {
+      setActiveExample(newExample);
+      localStorage.setItem("active-example", newExample);
+    },
+    [setActiveExample]
+  );
+
+  // store active example in local storage, so we can refresh the page while developing
+  useEffect(() => {
+    const lastActiveExample = localStorage.getItem("active-example");
+    if (lastActiveExample) {
+      setActiveExample(lastActiveExample);
+    }
+  }, [setActiveExample]);
 
   const ActiveExampleComponent = examples[activeExample];
 
@@ -21,7 +37,7 @@ function App() {
     <div className="app">
       <h1>{activeExample}</h1>
       {Object.keys(examples).map(example => (
-        <button key={example} onClick={() => setActiveExample(example)}>
+        <button key={example} onClick={() => selectExample(example)}>
           {example}
         </button>
       ))}
