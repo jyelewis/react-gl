@@ -48,9 +48,9 @@ export const Camera3D: React.FC<Props> = ({
 
   const projectionMatrix = useMemo(() => {
     // create a camera matrix
-    const cameraMatrix = mat4.create();
-    mat4.identity(cameraMatrix);
-    mat4.translate(cameraMatrix, cameraMatrix, [
+    const cameraPositionMatrix = mat4.create();
+    mat4.identity(cameraPositionMatrix);
+    mat4.translate(cameraPositionMatrix, cameraPositionMatrix, [
       -cameraPosition.x,
       -cameraPosition.y,
       -cameraPosition.z
@@ -74,7 +74,7 @@ export const Camera3D: React.FC<Props> = ({
       zFar || 100.0
     );
 
-    mat4.multiply(projectionMatrix, projectionMatrix, cameraMatrix);
+    mat4.multiply(projectionMatrix, projectionMatrix, cameraPositionMatrix);
 
     return projectionMatrix;
   }, [width, height, cameraPosition, zFar, zNear]);

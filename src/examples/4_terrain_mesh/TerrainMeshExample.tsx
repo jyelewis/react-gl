@@ -19,8 +19,8 @@ export const TerrainMeshExample: React.FC = () => {
     <div>
       <WebGLCanvas width={500} height={500}>
         <Camera3D
-          zFar={100.0}
-          zNear={0.1}
+          zNear={5.0}
+          zFar={500.0}
           defaultPosition={{
             // x: 256 / 2,
             // y: 256 / 2,

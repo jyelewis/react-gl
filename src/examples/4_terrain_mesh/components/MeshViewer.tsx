@@ -13,18 +13,28 @@ const vsSource = `
 
   uniform mat4 uModelViewMatrix;
   uniform mat4 uProjectionMatrix;
-  
-  // varying vec3 vPos;
 
   void main(void) {
     gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-    gl_Position.z = (aVertexPosition.z / 256.0) - 0.0;
   }
 `;
 
 const fsSource = `
+  precision mediump float;
+  precision mediump float;
+
   void main(void) {
-    gl_FragColor = vec4(gl_FragCoord.z, 1.0, 1.0, 0.5);
+    float screen_width = 500.0;
+    float screen_height = 500.0;
+  
+    gl_FragColor.r = ((gl_FragCoord.x / screen_width) * 0.6) + 0.2;
+    gl_FragColor.g = ((gl_FragCoord.y / screen_height) * 0.6) + 0.2;
+    
+    // represent the depth buffer in b, most values are 0.9-1.0 so remap that to 0.0->1.0
+    // better near & far values would make more effective use of this space
+    gl_FragColor.b = max((gl_FragCoord.z - 0.9) * 10.0, 0.0);
+    
+    gl_FragColor.a = 1.0;
   }
 `;
 
