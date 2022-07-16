@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from "react";
 import { Camera3DContext } from "./Camera3D";
 
-const movement = 0.25;
+const movement = 1;
 
 export const CameraControls: React.FC = () => {
   const { cameraPosition, setCameraPosition } = useContext(Camera3DContext);
