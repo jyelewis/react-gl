@@ -1,6 +1,9 @@
 import React from "react";
-import { ThreeTerrainVisualisation } from "./components/ThreeVisualisation";
 import { TerrainOrthoHandler } from "./components/TerrainOrthoHandler";
+import { TerrainMesh } from "./components/TerrainMesh";
+import { Camera3D } from "../../components/Camera3D";
+import { CameraControls } from "../../components/CameraControls";
+import { WebGLCanvas } from "../../components/WebGLCanvas";
 
 const tileZoom = 14;
 const tileX = 15066;
@@ -14,12 +17,29 @@ const orthoImageUrl = `https://api.mapbox.com/v4/mapbox.satellite/${tileZoom}/${
 export const TerrainMeshExample: React.FC = () => {
   return (
     <div>
-      <TerrainOrthoHandler
-        terrainImageUrl={terrainImageUrl}
-        orthoImageUrl={orthoImageUrl}
-      >
-        <ThreeTerrainVisualisation />
-      </TerrainOrthoHandler>
+      <WebGLCanvas width={500} height={500}>
+        <Camera3D
+          zFar={100.0}
+          zNear={0.1}
+          defaultPosition={{
+            // x: 256 / 2,
+            // y: 256 / 2,
+            x: 0,
+            y: 0,
+            z: 20
+          }}
+        >
+          <TerrainOrthoHandler
+            terrainImageUrl={terrainImageUrl}
+            orthoImageUrl={orthoImageUrl}
+          >
+            {/*TODO: rendering both the mesh & cube at once causes gl errors...*/}
+            <TerrainMesh />
+            {/*<Cube />*/}
+          </TerrainOrthoHandler>
+          <CameraControls />
+        </Camera3D>
+      </WebGLCanvas>
     </div>
   );
 };

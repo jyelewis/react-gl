@@ -1,6 +1,10 @@
 import { NdArray } from "ndarray";
 import { Mesh } from "../types/Mesh";
 
+// TODO: break this up into multiple draw calls if needed
+// TODO: compute normals
+const MAX_VERTICES_IN_MESH = 2 ** 16 - 1;
+
 // takes an NdArray of points (width, height, [x, y, z])
 // produces a mesh
 export function pointsToMesh(points: NdArray<Uint32Array>): Mesh {
@@ -9,10 +13,13 @@ export function pointsToMesh(points: NdArray<Uint32Array>): Mesh {
 
   const numVertices = width * height; // one vertex for every x,y position
   const numIndices = (width - 1) * (height - 1) * 6; // 6 indexes for every position, excluding right/bottom borders
-  const numTriangles = numIndices / 3; // 3 vertex indexes = 1 triangle
 
-  const vertices = new Uint32Array(numVertices * 3); // 3 values for each vert
-  const indices = new Uint32Array(numIndices); // 1 value for each vert index
+  if (numVertices >= MAX_VERTICES_IN_MESH) {
+    throw new Error("Too many vertexes for single draw call mesh");
+  }
+
+  const vertices = new Float32Array(numVertices * 3); // 3 values for each vert
+  const indices = new Uint16Array(numIndices); // 1 value for each vert index
 
   // create a vertex for each point
   let vertexIndex = 0;
@@ -56,7 +63,6 @@ export function pointsToMesh(points: NdArray<Uint32Array>): Mesh {
   return {
     vertices,
     numVertices,
-    indices,
-    numTriangles
+    indices
   };
 }

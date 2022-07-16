@@ -1,8 +1,6 @@
 export type Mesh = {
-  vertices: Uint32Array;
+  vertices: Float32Array;
   numVertices: number;
 
-  indices: Uint32Array;
-
-  numTriangles: number;
+  indices: Uint16Array;
 };

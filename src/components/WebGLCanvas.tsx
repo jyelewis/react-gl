@@ -63,6 +63,7 @@ export const WebGLCanvas: React.FC<Props> = ({ width, height, children }) => {
     // configure gl environment
     newGl.enable(newGl.DEPTH_TEST); // enable depth testing
     newGl.enable(newGl.BLEND);
+    newGl.disable(newGl.CULL_FACE);
     newGl.blendFunc(newGl.SRC_ALPHA, newGl.ONE_MINUS_SRC_ALPHA);
     newGl.depthFunc(newGl.LEQUAL); // near things obscure far things
 

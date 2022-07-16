@@ -10,8 +10,11 @@ export function useMapboxTerrain(
       return;
     }
 
-    const imageWidth = terrainImage.shape[0];
-    const imageHeight = terrainImage.shape[1];
+    // TODO: pointsToMesh currently doesn't support breaking mesh up into multiple draw calls
+    // const imageWidth = terrainImage.shape[0];
+    // const imageHeight = terrainImage.shape[1];
+    const imageWidth = 250;
+    const imageHeight = 250;
 
     // only need 24 bits per value, but there is no typed array available for this, so use 32 bits
     const sampledPoints = ndarray(new Uint32Array(imageWidth * imageHeight), [

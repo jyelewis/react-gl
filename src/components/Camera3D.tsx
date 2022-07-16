@@ -22,15 +22,27 @@ export const Camera3DContext = React.createContext<Camera3DContextValue>(
 
 type Props = {
   children: React.ReactNode;
+  defaultPosition?: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  zNear?: number;
+  zFar?: number;
 };
 
-export const Camera3D: React.FC<Props> = ({ children }) => {
+export const Camera3D: React.FC<Props> = ({
+  children,
+  defaultPosition,
+  zNear,
+  zFar
+}) => {
   const { width, height } = useContext(WebGLContext);
 
   const [cameraPosition, setCameraPosition] = useState<CameraPosition>({
-    x: 0,
-    y: 0,
-    z: 0,
+    x: defaultPosition?.x || 0,
+    y: defaultPosition?.y || 0,
+    z: defaultPosition?.z || 0,
     fov: (45 * Math.PI) / 180 // in radians
   });
 
@@ -50,18 +62,22 @@ export const Camera3D: React.FC<Props> = ({ children }) => {
     // and 100 units away from the camera.
 
     const aspect = width / height;
-    const zNear = 0.1;
-    const zFar = 100.0;
 
     // note: glmatrix.js always has the first argument
     // as the destination to receive the result.
     const projectionMatrix = mat4.create();
-    mat4.perspective(projectionMatrix, cameraPosition.fov, aspect, zNear, zFar);
+    mat4.perspective(
+      projectionMatrix,
+      cameraPosition.fov,
+      aspect,
+      zNear || 0.1,
+      zFar || 100.0
+    );
 
     mat4.multiply(projectionMatrix, projectionMatrix, cameraMatrix);
 
     return projectionMatrix;
-  }, [width, height, cameraPosition]);
+  }, [width, height, cameraPosition, zFar, zNear]);
 
   const cameraContextValue = useMemo<Camera3DContextValue>(
     () => ({

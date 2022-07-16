@@ -4,26 +4,21 @@
   "private": true,
   "homepage": "https://jyelewis.github.io/react-gl",
   "dependencies": {
-    "@react-three/drei": "^9.16.0",
-    "@react-three/fiber": "^8.0.27",
     "gl-matrix": "^3.4.3",
     "ndarray": "^1.0.19",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "three": "^0.142.0"
+    "react-scripts": "5.0.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
-    "@types/geojson": "^7946.0.8",
     "@types/jest": "^27.0.1",
     "@types/ndarray": "^1.0.11",
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
-    "@types/three": "^0.141.0",
     "gh-pages": "^4.0.0",
     "prettier": "^2.7.1",
     "typescript": "^4.4.2"
