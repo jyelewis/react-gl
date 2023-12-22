@@ -4,11 +4,16 @@
   "private": true,
   "homepage": "https://jyelewis.github.io/react-gl",
   "dependencies": {
+    "@react-three/drei": "^9.92.4",
+    "@react-three/fiber": "^8.15.12",
+    "@types/three": "^0.159.0",
     "gl-matrix": "^3.4.3",
     "ndarray": "^1.0.19",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "three": "^0.159.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.14.1",

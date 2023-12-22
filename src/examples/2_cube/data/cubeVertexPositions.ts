@@ -1,4 +1,4 @@
-export const cubeVertexes = new Float32Array([
+export const cubeVertexPositions = new Float32Array([
   // Front face
   -1.0,
   -1.0,

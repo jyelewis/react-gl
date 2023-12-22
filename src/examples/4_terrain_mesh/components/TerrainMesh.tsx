@@ -1,9 +1,25 @@
 import React, { useContext } from "react";
 import { MeshViewer } from "./MeshViewer";
 import { TerrainOrthoContext } from "./TerrainOrthoHandler";
+import { mat4 } from "gl-matrix";
 
-export const TerrainMesh: React.FC = () => {
-  const { terrainMesh } = useContext(TerrainOrthoContext);
+type Props = {
+  showAsWireframe?: boolean;
+  modelViewMatrix: mat4;
+};
 
-  return <MeshViewer mesh={terrainMesh} />;
+export const TerrainMesh: React.FC<Props> = ({
+  showAsWireframe,
+  modelViewMatrix
+}) => {
+  const { terrainMesh, orthoImage } = useContext(TerrainOrthoContext);
+
+  return (
+    <MeshViewer
+      mesh={terrainMesh}
+      showAsWireframe={showAsWireframe}
+      textureBytes={orthoImage}
+      modelViewMatrix={modelViewMatrix}
+    />
+  );
 };

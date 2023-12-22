@@ -8,8 +8,11 @@ import React, {
 } from "react";
 
 export interface IWebGLContextValue {
-  width: number;
-  height: number;
+  renderWidth: number;
+  renderHeight: number;
+
+  screenWidth: number;
+  screenHeight: number;
 
   gl: WebGL2RenderingContext;
 
@@ -83,6 +86,16 @@ export const WebGLCanvas: React.FC<Props> = ({ width, height, children }) => {
     frameCallbacks.current.splice(frameCallbacks.current.indexOf(cb), 1);
   }, []);
 
+  const sizes = useMemo(
+    () => ({
+      screenWidth: width,
+      screenHeight: height,
+      renderWidth: width * window.devicePixelRatio,
+      renderHeight: height * window.devicePixelRatio
+    }),
+    [width, height]
+  );
+
   const webGlContextValue = useMemo<IWebGLContextValue | null>(() => {
     if (!gl) {
       // not ready yet
@@ -90,15 +103,18 @@ export const WebGLCanvas: React.FC<Props> = ({ width, height, children }) => {
     }
 
     return {
-      width,
-      height,
+      screenWidth: sizes.screenWidth,
+      screenHeight: sizes.screenHeight,
+
+      renderWidth: sizes.renderWidth,
+      renderHeight: sizes.renderHeight,
 
       gl,
 
       registerFrameCallback,
       unregisterFrameCallback
     };
-  }, [width, height, gl, registerFrameCallback, unregisterFrameCallback]);
+  }, [sizes, gl, registerFrameCallback, unregisterFrameCallback]);
 
   const onFrame: FrameRequestCallback = useCallback(
     time => {
@@ -128,7 +144,12 @@ export const WebGLCanvas: React.FC<Props> = ({ width, height, children }) => {
 
   return (
     <>
-      <canvas ref={setCanvas} width={width} height={height} />
+      <canvas
+        ref={setCanvas}
+        width={sizes.renderWidth}
+        height={sizes.renderHeight}
+        style={{ width: sizes.screenWidth, height: sizes.screenHeight }}
+      />
 
       {gl === null && <p>Unable to initialise GL context</p>}
 

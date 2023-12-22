@@ -37,7 +37,7 @@ export const Camera3D: React.FC<Props> = ({
   zNear,
   zFar
 }) => {
-  const { width, height } = useContext(WebGLContext);
+  const { renderWidth, renderHeight } = useContext(WebGLContext);
 
   const [cameraPosition, setCameraPosition] = useState<CameraPosition>({
     x: defaultPosition?.x || 0,
@@ -61,7 +61,7 @@ export const Camera3D: React.FC<Props> = ({
     // and we only want to see objects between 0.1 units
     // and 100 units away from the camera.
 
-    const aspect = width / height;
+    const aspect = renderWidth / renderHeight;
 
     // note: glmatrix.js always has the first argument
     // as the destination to receive the result.
@@ -77,7 +77,7 @@ export const Camera3D: React.FC<Props> = ({
     mat4.multiply(projectionMatrix, projectionMatrix, cameraPositionMatrix);
 
     return projectionMatrix;
-  }, [width, height, cameraPosition, zFar, zNear]);
+  }, [renderWidth, renderHeight, cameraPosition, zFar, zNear]);
 
   const cameraContextValue = useMemo<Camera3DContextValue>(
     () => ({

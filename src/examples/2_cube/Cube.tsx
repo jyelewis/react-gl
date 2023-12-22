@@ -1,13 +1,14 @@
-import React, { useContext } from "react";
+import React, { useCallback, useContext } from "react";
 import { WebGLContext } from "../../components/WebGLCanvas";
 import { useMemoWithCleanUp } from "../../hooks/useMemoWithCleanUp";
 import { loadGLShader } from "../../utilities/loadGLShader";
 import { compileGLProgram } from "../../utilities/compileGLProgram";
-import { cubeVertexes } from "./data/cubeVertexes";
+import { cubeVertexPositions } from "./data/cubeVertexPositions";
 import { cubeColors } from "./data/cubeColors";
 import { useOnFrame } from "../../hooks/useOnFrame";
 import { mat4 } from "gl-matrix";
 import { Camera3DContext } from "../../components/Camera3D";
+import { cubeVertexIndices } from "./data/cubeVertexIndices";
 
 const vsSource = `
   attribute vec4 aVertexPosition;
@@ -70,24 +71,7 @@ export const Cube: React.FC = () => {
     // create vertex position buffer for square
     const vertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, cubeVertexes, gl.STATIC_DRAW);
-
-    // configure vertex buffer for our program
-    const numComponents = 3; // pull out 3 values per iteration
-    const type = gl.FLOAT; // the data in the buffer is 32bit floats
-    const normalize = false; // don't normalize
-    const stride = 0; // how many bytes to get from one set of values to the next
-    // 0 = use type and numComponents above
-    const offset = 0; // how many bytes inside the buffer to start from
-    gl.vertexAttribPointer(
-      program.attribLocations.vertexPosition,
-      numComponents,
-      type,
-      normalize,
-      stride,
-      offset
-    );
-    gl.enableVertexAttribArray(program.attribLocations.vertexPosition);
+    gl.bufferData(gl.ARRAY_BUFFER, cubeVertexPositions, gl.STATIC_DRAW);
 
     return [
       vertexPositionBuffer,
@@ -96,28 +80,13 @@ export const Cube: React.FC = () => {
         gl.deleteBuffer(vertexPositionBuffer);
       }
     ];
-  }, [gl, program]);
+  }, [gl]);
 
   const vertexColorBuffer = useMemoWithCleanUp(() => {
     // create vertex color buffer for cube
     const vertexColorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, cubeColors, gl.STATIC_DRAW);
-
-    const numComponents = 4;
-    const type = gl.FLOAT;
-    const normalize = false;
-    const stride = 0;
-    const offset = 0;
-    gl.vertexAttribPointer(
-      program.attribLocations.vertexColor,
-      numComponents,
-      type,
-      normalize,
-      stride,
-      offset
-    );
-    gl.enableVertexAttribArray(program.attribLocations.vertexColor);
 
     return [
       vertexColorBuffer,
@@ -126,57 +95,19 @@ export const Cube: React.FC = () => {
         gl.deleteBuffer(vertexColorBuffer);
       }
     ];
-  }, [gl, program]);
+  }, [gl]);
 
   const indexBuffer = useMemoWithCleanUp(() => {
     // create index buffer for cube
     const indexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
     // This array defines each face as two triangles, using the
     // indices into the vertex array to specify each triangle's
     // position.
-    const indices = new Uint16Array([
-      0,
-      1,
-      2,
-      0,
-      2,
-      3, // front
-      4,
-      5,
-      6,
-      4,
-      6,
-      7, // back
-      8,
-      9,
-      10,
-      8,
-      10,
-      11, // top
-      12,
-      13,
-      14,
-      12,
-      14,
-      15, // bottom
-      16,
-      17,
-      18,
-      16,
-      18,
-      19, // right
-      20,
-      21,
-      22,
-      20,
-      22,
-      23 // left
-    ]);
 
     // Now send the element array to GL
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndices, gl.STATIC_DRAW);
 
     return [
       indexBuffer,
@@ -185,9 +116,47 @@ export const Cube: React.FC = () => {
         gl.deleteBuffer(indexBuffer);
       }
     ];
-  }, [gl, program]);
+  }, [gl]);
 
-  useOnFrame(time => {
+  // create a vbo to hold all our vertex attributes & index buffer
+  const vbo = useMemoWithCleanUp(() => {
+    const vbo = gl.createVertexArray();
+    gl.bindVertexArray(vbo);
+
+    gl.enableVertexAttribArray(program.attribLocations.vertexPosition);
+    gl.enableVertexAttribArray(program.attribLocations.vertexColor);
+
+    // enable vertex position array
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
+    gl.vertexAttribPointer(
+      program.attribLocations.vertexPosition,
+      3,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
+
+    // enable vertex colour array
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
+    gl.vertexAttribPointer(
+      program.attribLocations.vertexColor,
+      4,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
+
+    // bind index buffer program
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+    gl.bindVertexArray(null);
+
+    return [vbo, () => gl.deleteVertexArray(vbo)];
+  }, [gl, vertexPositionBuffer, vertexColorBuffer, indexBuffer]);
+
+  const createMVMatrix = useCallback((time: number) => {
     // our mv matrix specifies where we want this square to be drawn
     const modelViewMatrix = mat4.create();
 
@@ -203,14 +172,18 @@ export const Cube: React.FC = () => {
     mat4.rotateX(modelViewMatrix, modelViewMatrix, offsetRotateX);
     mat4.rotateY(modelViewMatrix, modelViewMatrix, offsetRotateY);
 
+    return modelViewMatrix;
+  }, []);
+
+  useOnFrame(time => {
     // select our shader program
     gl.useProgram(program.glProgram);
 
-    // bind mv matrix to our program if it or the program changes
+    // bind uniforms
     gl.uniformMatrix4fv(
       program.uniformLocations.modelViewMatrix,
       false,
-      modelViewMatrix
+      createMVMatrix(time)
     );
 
     // bind camera projection matrix
@@ -220,15 +193,13 @@ export const Cube: React.FC = () => {
       projectionMatrix
     );
 
-    // bind vertexes & program
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    // bind our vertex array for positions + colours
+    gl.bindVertexArray(vbo);
 
-    const vertexCount = 36;
-    const type = gl.UNSIGNED_SHORT;
-    const offset = 0;
-    gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+    // draw everything!
+    gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+
+    gl.bindVertexArray(null);
   });
 
   return null;
